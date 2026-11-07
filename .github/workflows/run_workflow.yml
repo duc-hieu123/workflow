@@ -1,0 +1,30 @@
+name: Continuous Workflow
+
+on:
+  # Cho phép kích hoạt bằng Webhook từ bên ngoài
+  repository_dispatch:
+    types: [trigger-my-workflow]
+  # (Tùy chọn) Cho phép bạn bấm nút chạy thủ công trên giao diện GitHub
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cài đặt Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Cài đặt các thư viện cần thiết
+        run: |
+          pip install requests
+
+      - name: Chạy script tự động hóa
+        env:
+          # Nếu script cần mật mã/token, hãy lấy từ GitHub Secrets truyền vào đây
+          MY_SECRET_KEY: ${{ secrets.MY_SECRET_KEY }}
+        run: python workflow_script.py
